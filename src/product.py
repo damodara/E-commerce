@@ -36,8 +36,28 @@ class Product:
         else:
             print("Цена не должна быть нулевая или отрицательная")
 
+    def __str__(self) -> str:
+        """
+        Строковое представление продукта.
+
+        :return: Строка в формате "Название продукта, X руб. Остаток: X шт."
+        """
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: "Product") -> float:
+        """
+        Магический метод сложения продуктов.
+
+        :param other: Другой объект Product.
+        :return: Сумма произведений цены на количество для обоих продуктов.
+        """
+        if not isinstance(other, Product):
+            raise TypeError("Можно складывать только объекты класса Product")
+
+        return self.price * self.quantity + other.price * other.quantity
+
     @classmethod
-    def new_product(cls, product_data: dict) -> 'Product':
+    def new_product(cls, product_data: dict) -> "Product":
         """
         Класс-метод для создания продукта из словаря.
 
@@ -45,14 +65,16 @@ class Product:
         :return: Экземпляр класса Product.
         """
         return cls(
-            name=product_data['name'],
-            description=product_data['description'],
-            price=product_data['price'],
-            quantity=product_data['quantity']
+            name=product_data["name"],
+            description=product_data["description"],
+            price=product_data["price"],
+            quantity=product_data["quantity"],
         )
 
     @classmethod
-    def new_product_with_duplicate_check(cls, product_data: dict, existing_products: list) -> 'Product':
+    def new_product_with_duplicate_check(
+        cls, product_data: dict, existing_products: list
+    ) -> "Product":
         """
         Класс-метод для создания продукта с проверкой дубликатов.
 
@@ -62,13 +84,13 @@ class Product:
         """
         # Поиск дубликата по имени
         for existing_product in existing_products:
-            if existing_product.name.lower() == product_data['name'].lower():
+            if existing_product.name.lower() == product_data["name"].lower():
                 # Складываем количество
-                existing_product.quantity += product_data['quantity']
+                existing_product.quantity += product_data["quantity"]
                 # Выбираем более высокую цену
-                if product_data['price'] > existing_product.price:
-                    existing_product.price = product_data['price']
+                if product_data["price"] > existing_product.price:
+                    existing_product.price = product_data["price"]
                 return existing_product
-        
+
         # Если дубликат не найден, создаем новый продукт
         return cls.new_product(product_data)

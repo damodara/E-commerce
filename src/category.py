@@ -48,10 +48,50 @@ class Category:
     def products(self) -> str:
         """
         Геттер для приватного атрибута products.
-        
+
         :return: Строка со всеми продуктами в формате "Название продукта, X руб. Остаток: X шт.\n"
         """
         result = ""
         for product in self._products:
-            result += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
+            result += str(product) + "\n"  # Используем __str__ продукта
         return result
+
+    def __str__(self) -> str:
+        """
+        Строковое представление категории.
+
+        :return: Строка в формате "Название категории, количество продуктов: X шт."
+        """
+        total_quantity = sum(product.quantity for product in self._products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+
+class CategoryIterator:
+    """Итератор для перебора товаров в категории."""
+
+    def __init__(self, category: Category):
+        """
+        Инициализация итератора.
+
+        :param category: Объект категории для итерации.
+        """
+        self.category = category
+        self.index = 0
+
+    def __iter__(self):
+        """Возвращает сам объект как итератор."""
+        return self
+
+    def __next__(self) -> Product:
+        """
+        Возвращает следующий продукт в категории.
+
+        :return: Следующий продукт.
+        :raises StopIteration: Когда продукты закончились.
+        """
+        if self.index < len(self.category._products):
+            product = self.category._products[self.index]
+            self.index += 1
+            return product
+        else:
+            raise StopIteration
