@@ -40,7 +40,11 @@ class Category:
         Добавление продукта в категорию.
 
         :param product: Продукт для добавления.
+        :raises TypeError: Если переданный объект не является экземпляром Product или его наследников.
         """
+        if not isinstance(product, Product):
+            raise TypeError("В категорию можно добавлять только объекты класса Product или его наследников")
+
         self._products.append(product)
         Category.product_count += 1
 

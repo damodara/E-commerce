@@ -16,7 +16,7 @@ if __name__ == '__main__':
     print(smartphone1.model)
     print(smartphone1.memory)
     print(smartphone1.color)
-
+    print("______")
     print(smartphone2.name)
     print(smartphone2.description)
     print(smartphone2.price)
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     print(smartphone2.model)
     print(smartphone2.memory)
     print(smartphone2.color)
-
+    print("______")
     print(smartphone3.name)
     print(smartphone3.description)
     print(smartphone3.price)
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     print(smartphone3.model)
     print(smartphone3.memory)
     print(smartphone3.color)
-
+    print("______")
     grass1 = LawnGrass("Газонная трава", "Элитная трава для газона", 500.0, 20, "Россия", "7 дней", "Зеленый")
     grass2 = LawnGrass("Газонная трава 2", "Выносливая трава", 450.0, 15, "США", "5 дней", "Темно-зеленый")
 
@@ -45,7 +45,7 @@ if __name__ == '__main__':
     print(grass1.country)
     print(grass1.germination_period)
     print(grass1.color)
-
+    print("______")
     print(grass2.name)
     print(grass2.description)
     print(grass2.price)
@@ -53,20 +53,20 @@ if __name__ == '__main__':
     print(grass2.country)
     print(grass2.germination_period)
     print(grass2.color)
-
+    print("______")
     smartphone_sum = smartphone1 + smartphone2
     print(smartphone_sum)
-
+    print("______")
     grass_sum = grass1 + grass2
     print(grass_sum)
-
+    print("______")
     try:
         invalid_sum = smartphone1 + grass1
     except TypeError:
         print("Возникла ошибка TypeError при попытке сложения")
     else:
         print("Не возникла ошибка TypeError при попытке сложения")
-
+    print("______")
     category_smartphones = Category("Смартфоны", "Высокотехнологичные смартфоны", [smartphone1, smartphone2])
     category_grass = Category("Газонная трава", "Различные виды газонной травы", [grass1, grass2])
 
