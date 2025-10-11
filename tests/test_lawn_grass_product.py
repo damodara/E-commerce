@@ -11,7 +11,7 @@ def test_lawn_grass_product_init_field():
         20,
         "Россия",
         "7 дней",
-        "Зеленый"
+        "Зеленый",
     )
     assert lg.name == "Газонная трава"
     assert lg.description == "Элитная трава для газона"

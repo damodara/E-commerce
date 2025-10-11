@@ -3,7 +3,6 @@ import pytest
 from src.smartphone_product import Smartphone
 
 
-
 def test_smartphone_product_init_field():
     s = Smartphone(
         "Samsung Galaxy S23 Ultra",
@@ -13,7 +12,7 @@ def test_smartphone_product_init_field():
         95.5,
         "S23 Ultra",
         256,
-        "Серый"
+        "Серый",
     )
     assert s.name == "Samsung Galaxy S23 Ultra"
     assert s.price == 180000.0
