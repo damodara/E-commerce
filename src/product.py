@@ -1,4 +1,10 @@
-class Product:
+from typing import Any
+
+from src.base_product import BaseProduct
+from src.logging_mixin import LoggingMixin
+
+
+class Product(LoggingMixin, BaseProduct):
     """Модель товара в каталоге."""
 
     name: str
@@ -14,10 +20,17 @@ class Product:
         :param price: Цена товара.
         :param quantity: Количество товара на складе.
         """
+        # Устанавливаем атрибуты перед вызовом super()
         self.name = name
         self.description = description
         self._price = price  # приватный атрибут
         self.quantity = quantity
+
+        # Вызываем super() для миксина
+        super().__init__(name, description, price, quantity)
+
+        # Логируем создание
+        self._log_creation(name, description, price, quantity)
 
     @property
     def price(self) -> float:
@@ -35,6 +48,14 @@ class Product:
             self._price = value
         else:
             print("Цена не должна быть нулевая или отрицательная")
+
+    def get_total_value(self) -> float:
+        """
+        Получение общей стоимости товара.
+
+        :return: Общая стоимость (цена * количество).
+        """
+        return self.price * self.quantity
 
     def __str__(self) -> str:
         """
@@ -55,7 +76,7 @@ class Product:
             raise TypeError("Можно складывать только объекты класса Product")
 
         # Проверка на одинаковый тип класса
-        if type(self) != type(other):
+        if self.__class__ != other.__class__:
             raise TypeError("Можно складывать только объекты одинакового класса")
 
         return self.price * self.quantity + other.price * other.quantity
@@ -78,7 +99,7 @@ class Product:
     @classmethod
     def new_product_with_duplicate_check(
         cls, product_data: dict, existing_products: list
-    ) -> "Product":
+    ) -> Any:
         """
         Класс-метод для создания продукта с проверкой дубликатов.
 

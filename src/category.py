@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from src.product import Product
 
@@ -14,90 +14,89 @@ class Category:
 
     name: str
     description: str
+    products: List[Product]
 
     # атрибуты класса (общие для всех объектов)
     category_count = 0
     product_count = 0
 
-    def __init__(self, name: str, description: str, products: List[Product] = None):
+    def __init__(
+        self, name: str, description: str, products: Optional[List[Product]] = None
+    ) -> None:
         """
         Инициализация категории.
 
         :param name: Название категории.
         :param description: Описание категории.
-        :param products: Список товаров, относящихся к категории.
+        :param products: Список товаров в категории.
         """
         self.name = name
         self.description = description
-        self._products = products or []  # приватный атрибут
+        self.products = products if products is not None else []
 
         # автоматическое обновление атрибутов класса
         Category.category_count += 1
-        Category.product_count += len(self._products)
+        Category.product_count += len(self.products)
 
     def add_product(self, product: Product) -> None:
         """
-        Добавление продукта в категорию.
+        Добавление товара в категорию.
 
-        :param product: Продукт для добавления.
-        :raises TypeError: Если переданный объект не является экземпляром Product или его наследников.
+        :param product: Товар для добавления.
         """
         if not isinstance(product, Product):
-            raise TypeError(
-                "В категорию можно добавлять только объекты класса Product или его наследников"
-            )
+            raise TypeError("Можно добавлять только объекты класса Product")
 
-        self._products.append(product)
+        self.products.append(product)
         Category.product_count += 1
 
     @property
-    def products(self) -> str:
-        """
-        Геттер для приватного атрибута products.
+    def products(self) -> List[Product]:
+        """Геттер для списка товаров."""
+        return self._products
 
-        :return: Строка со всеми продуктами в формате "Название продукта, X руб. Остаток: X шт.\n"
-        """
-        result = ""
-        for product in self._products:
-            result += str(product) + "\n"  # Используем __str__ продукта
-        return result
+    @products.setter
+    def products(self, value: List[Product]) -> None:
+        """Сеттер для списка товаров."""
+        self._products = value
 
     def __str__(self) -> str:
         """
         Строковое представление категории.
 
-        :return: Строка в формате "Название категории, количество продуктов: X шт."
+        :return: Строка с информацией о категории.
         """
-        total_quantity = sum(product.quantity for product in self._products)
-        return f"{self.name}, количество продуктов: {total_quantity} шт."
+        if not self.products:
+            return f"{self.name}, {self.description}"
+
+        product_names = [product.name for product in self.products]
+        return f"{self.name}, {self.description}, товары: {', '.join(product_names)}"
+
+    def __iter__(self):
+        """Итератор по товарам категории."""
+        return CategoryIterator(self.products)
 
 
 class CategoryIterator:
-    """Итератор для перебора товаров в категории."""
+    """Итератор для категории товаров."""
 
-    def __init__(self, category: Category):
+    def __init__(self, products: List[Product]) -> None:
         """
         Инициализация итератора.
 
-        :param category: Объект категории для итерации.
+        :param products: Список товаров.
         """
-        self.category = category
+        self.products = products
         self.index = 0
 
     def __iter__(self):
-        """Возвращает сам объект как итератор."""
+        """Возвращает сам итератор."""
         return self
 
     def __next__(self) -> Product:
-        """
-        Возвращает следующий продукт в категории.
-
-        :return: Следующий продукт.
-        :raises StopIteration: Когда продукты закончились.
-        """
-        if self.index < len(self.category._products):
-            product = self.category._products[self.index]
-            self.index += 1
-            return product
-        else:
+        """Возвращает следующий товар."""
+        if self.index >= len(self.products):
             raise StopIteration
+        product = self.products[self.index]
+        self.index += 1
+        return product
