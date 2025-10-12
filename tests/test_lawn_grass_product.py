@@ -1,9 +1,7 @@
-import pytest
-
 from src.lawn_grass_product import LawnGrass
 
 
-def test_lawn_grass_product_init_field():
+def test_lawn_grass_product_init_field() -> None:
     lg = LawnGrass(
         "Газонная трава",
         "Элитная трава для газона",
