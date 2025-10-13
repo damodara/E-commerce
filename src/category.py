@@ -14,7 +14,6 @@ class Category:
 
     name: str
     description: str
-    products: List[Product]
 
     # атрибуты класса (общие для всех объектов)
     category_count = 0
@@ -32,61 +31,57 @@ class Category:
         """
         self.name = name
         self.description = description
-        self.products = products if products is not None else []
+        self._products: List[Product] = products or []  # приватный список товаров
 
         # автоматическое обновление атрибутов класса
         Category.category_count += 1
-        Category.product_count += len(self.products)
+        Category.product_count += len(self._products)
 
     def add_product(self, product: Product) -> None:
         """
         Добавление товара в категорию.
 
         :param product: Товар для добавления.
+        :raises TypeError: если объект не Product или его наследник.
         """
         if not isinstance(product, Product):
             raise TypeError("Можно добавлять только объекты класса Product")
-
-        self.products.append(product)
+        self._products.append(product)
         Category.product_count += 1
 
     @property
-    def products(self) -> List[Product]:
-        """Геттер для списка товаров."""
-        return self._products
+    def products(self) -> str:
+        """
+        Геттер продуктов в виде форматированной строки.
 
-    @products.setter
-    def products(self, value: List[Product]) -> None:
-        """Сеттер для списка товаров."""
-        self._products = value
+        :return: Строка вида "Название, X руб. Остаток: Y шт.\n" для каждого товара.
+                 Для пустой категории — пустая строка.
+        """
+        if not self._products:
+            return ""
+        return "".join(f"{str(p)}\n" for p in self._products)
 
     def __str__(self) -> str:
         """
         Строковое представление категории.
 
-        :return: Строка с информацией о категории.
+        :return: "Название категории, количество продуктов: N шт."
+                 где N — сумма quantity всех товаров.
         """
-        if not self.products:
-            return f"{self.name}, {self.description}"
-
-        product_names = [product.name for product in self.products]
-        return f"{self.name}, {self.description}, товары: {', '.join(product_names)}"
-
-    def __iter__(self):
-        """Итератор по товарам категории."""
-        return CategoryIterator(self.products)
+        total_quantity = sum(p.quantity for p in self._products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
 
 
 class CategoryIterator:
     """Итератор для категории товаров."""
 
-    def __init__(self, products: List[Product]) -> None:
+    def __init__(self, category: Category) -> None:
         """
         Инициализация итератора.
 
-        :param products: Список товаров.
+        :param category: Объект категории.
         """
-        self.products = products
+        self.category = category
         self.index = 0
 
     def __iter__(self):
@@ -94,9 +89,13 @@ class CategoryIterator:
         return self
 
     def __next__(self) -> Product:
-        """Возвращает следующий товар."""
-        if self.index >= len(self.products):
+        """
+        Возвращает следующий товар по списку категории.
+
+        :raises StopIteration: когда товары закончились.
+        """
+        if self.index >= len(self.category._products):
             raise StopIteration
-        product = self.products[self.index]
+        product = self.category._products[self.index]
         self.index += 1
         return product
