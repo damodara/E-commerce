@@ -61,6 +61,22 @@ class Category:
             return ""
         return "".join(f"{str(p)}\n" for p in self._products)
 
+    def middle_price(self) -> float:
+        """
+        Подсчет среднего ценника всех товаров в категории.
+
+        :return: Средняя цена товаров в категории.
+             Возвращает 0, если в категории нет товаров.
+        """
+        try:
+            if not self._products:
+                return 0.0
+
+            total_price = sum(product.price for product in self._products)
+            return total_price / len(self._products)
+        except ZeroDivisionError:
+            return 0.0
+
     def __str__(self) -> str:
         """
         Строковое представление категории.
