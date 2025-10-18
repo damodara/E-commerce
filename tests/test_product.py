@@ -14,6 +14,11 @@ def test_product_init_fields() -> None:
     assert p.quantity == 5
 
 
+def test_product_init_zero_quantity() -> None:
+    with pytest.raises(ValueError):
+        Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+
+
 def test_product_price_getter() -> None:
     """Проверяет работу геттера цены."""
     p = Product("Test", "Test desc", 100.0, 1)
@@ -125,3 +130,19 @@ def test_product_new_product_with_duplicate_check_no_duplicate() -> None:
     assert result.name == "New Product"
     assert result.price == 150.0
     assert result.quantity == 3
+
+
+def test_is_available_zero_stock() -> None:
+    """Создание товара с нулевым количеством должно падать."""
+    with pytest.raises(
+        ValueError, match="Товар с нулевым количеством не может быть добавлен"
+    ):
+        Product("Test Product", "Description", 100.0, 0)
+
+
+def test_execute_zero_stock() -> None:
+    """Создание товара с нулевым количеством должно падать."""
+    with pytest.raises(
+        ValueError, match="Товар с нулевым количеством не может быть добавлен"
+    ):
+        Product("Test Product", "Description", 100.0, 0)

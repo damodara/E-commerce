@@ -24,8 +24,10 @@ class Product(LoggingMixin, BaseProduct):
         self.name = name
         self.description = description
         self._price = price  # приватный атрибут
-        self.quantity = quantity
-
+        if quantity > 0:
+            self.quantity = quantity
+        else:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
         # Вызываем super() для миксина
         super().__init__(name, description, price, quantity)
 

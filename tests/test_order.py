@@ -1,3 +1,5 @@
+import pytest
+
 from src.lawn_grass_product import LawnGrass
 from src.order import Order
 from src.product import Product
@@ -84,11 +86,11 @@ class TestOrder:
         assert order.is_available() is True
 
     def test_is_available_zero_stock(self) -> None:
-        """Тест проверки доступности при нулевом количестве товара."""
-        product = Product("Test Product", "Description", 100.0, 0)
-        order = Order(product, 1)
-
-        assert order.is_available() is False
+        """Создание товара с нулевым количеством должно приводить к ValueError."""
+        with pytest.raises(
+            ValueError, match="Товар с нулевым количеством не может быть добавлен"
+        ):
+            Product("Test Product", "Description", 100.0, 0)
 
     def test_execute_successful(self) -> None:
         """Тест успешного выполнения заказа."""
@@ -121,14 +123,11 @@ class TestOrder:
         assert product.quantity == 0
 
     def test_execute_zero_stock(self) -> None:
-        """Тест выполнения заказа при нулевом количестве товара."""
-        product = Product("Test Product", "Description", 100.0, 0)
-        order = Order(product, 1)
-
-        result = order.execute()
-
-        assert result is False
-        assert product.quantity == 0  # количество не изменилось
+        """Создание товара с нулевым количеством должно приводить к ValueError."""
+        with pytest.raises(
+            ValueError, match="Товар с нулевым количеством не может быть добавлен"
+        ):
+            Product("Test Product", "Description", 100.0, 0)
 
     def test_order_with_smartphone(self) -> None:
         """Тест заказа смартфона."""

@@ -177,3 +177,103 @@ def test_category_empty_products_list() -> None:
     products_str = cat.products
     assert "Test, 100.0 руб. Остаток: 1 шт." in products_str
     assert products_str.count("\n") == 1
+
+
+def test_middle_price_empty_category() -> None:
+    """Тест среднего ценника для пустой категории."""
+    cat = Category("Пустая категория", "Описание")
+    assert cat.middle_price() == 0.0
+
+
+def test_middle_price_single_product() -> None:
+    """Тест среднего ценника для категории с одним товаром."""
+    product = Product("Товар", "Описание", 100.0, 5)
+    cat = Category("Категория", "Описание", [product])
+    assert cat.middle_price() == 100.0
+
+
+def test_middle_price_multiple_products() -> None:
+    """Тест среднего ценника для категории с несколькими товарами."""
+    p1 = Product("Товар 1", "Описание", 100.0, 5)
+    p2 = Product("Товар 2", "Описание", 200.0, 3)
+    p3 = Product("Товар 3", "Описание", 300.0, 2)
+    cat = Category("Категория", "Описание", [p1, p2, p3])
+
+    # Средняя цена: (100 + 200 + 300) / 3 = 200.0
+    assert cat.middle_price() == 200.0
+
+
+def test_middle_price_with_zero_price() -> None:
+    """Тест среднего ценника с товаром нулевой цены."""
+    p1 = Product("Бесплатный товар", "Описание", 0.0, 5)
+    p2 = Product("Платный товар", "Описание", 100.0, 3)
+    cat = Category("Категория", "Описание", [p1, p2])
+
+    # Средняя цена: (0 + 100) / 2 = 50.0
+    assert cat.middle_price() == 50.0
+
+
+def test_middle_price_decimal_result() -> None:
+    """Тест среднего ценника с десятичным результатом."""
+    p1 = Product("Товар 1", "Описание", 100.0, 5)
+    p2 = Product("Товар 2", "Описание", 200.0, 3)
+    cat = Category("Категория", "Описание", [p1, p2])
+
+    # Средняя цена: (100 + 200) / 2 = 150.0
+    assert cat.middle_price() == 150.0
+
+
+def test_middle_price_after_adding_product() -> None:
+    """Тест среднего ценника после добавления товара."""
+    p1 = Product("Товар 1", "Описание", 100.0, 5)
+    cat = Category("Категория", "Описание", [p1])
+
+    # Изначально средняя цена: 100.0
+    assert cat.middle_price() == 100.0
+
+    # Добавляем второй товар
+    p2 = Product("Товар 2", "Описание", 300.0, 3)
+    cat.add_product(p2)
+
+    # Теперь средняя цена: (100 + 300) / 2 = 200.0
+    assert cat.middle_price() == 200.0
+
+
+def test_middle_price_large_numbers() -> None:
+    """Тест среднего ценника с большими числами."""
+    p1 = Product("Дорогой товар 1", "Описание", 1000000.0, 1)
+    p2 = Product("Дорогой товар 2", "Описание", 2000000.0, 1)
+    cat = Category("Категория", "Описание", [p1, p2])
+
+    # Средняя цена: (1000000 + 2000000) / 2 = 1500000.0
+    assert cat.middle_price() == 1500000.0
+
+
+def test_middle_price_precision() -> None:
+    """Тест точности вычисления среднего ценника."""
+    p1 = Product("Товар 1", "Описание", 99.99, 5)
+    p2 = Product("Товар 2", "Описание", 100.01, 3)
+    cat = Category("Категория", "Описание", [p1, p2])
+
+    # Средняя цена: (99.99 + 100.01) / 2 = 100.0
+    assert cat.middle_price() == 100.0
+
+
+def test_middle_price_negative_prices() -> None:
+    """Тест среднего ценника с отрицательными ценами."""
+    p1 = Product("Товар 1", "Описание", -50.0, 5)
+    p2 = Product("Товар 2", "Описание", 150.0, 3)
+    cat = Category("Категория", "Описание", [p1, p2])
+
+    # Средняя цена: (-50 + 150) / 2 = 50.0
+    assert cat.middle_price() == 50.0
+
+
+def test_middle_price_zero_division_protection() -> None:
+    """Тест защиты от деления на ноль при пустой категории."""
+    cat = Category("Пустая категория", "Описание")
+
+    # Должно вернуть 0.0 без ошибки деления на ноль
+    result = cat.middle_price()
+    assert result == 0.0
+    assert isinstance(result, float)
